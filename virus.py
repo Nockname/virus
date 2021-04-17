@@ -29,7 +29,7 @@ class SpreadVirus:
         return infection, direction
 
     @staticmethod
-    def calculate(infection, direction, MOVESPEED, MOVEROTATION, INFECTIONDISTANCE, PERCENTOFINFECTION, N_HUMANS):
+    def calculate(infection, direction, MOVESPEED, MOVEROTATION, INFECTIONDISTANCE, PERCENTOFINFECTION, numberOfHumans, IMMUNITY):
 
         #decrease infection time by 1 and possibly kill people
         for xValue in range(WIDTH):
@@ -38,9 +38,13 @@ class SpreadVirus:
                     if random() < PERCENTOFDEATH/100:
                         infection[xValue][yValue]=-1
                         direction[xValue][yValue]=False
-                        N_HUMANS-=1
+                        numberOfHumans-=1
+
                     else:
-                        infection[xValue][yValue]-=1
+                        if infection[xValue][yValue]==1 and IMMUNITY:
+                            infection[xValue][yValue]=-2
+                        else:
+                            infection[xValue][yValue]-=1
 
         #print("Kill Done")
         # print(max(max(x) if isinstance(x, list) else x for x in  infection))
@@ -74,11 +78,4 @@ class SpreadVirus:
             for yValue in range(HEIGHT):
                 infection, direction=SpreadVirus.__nextHumanPos(xValue, yValue, infection, direction, MOVESPEED, MOVEROTATION)
         
-        return infection
-        
-
-        
-
-
-
-   
+        return infection, numberOfHumans

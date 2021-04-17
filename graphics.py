@@ -34,12 +34,17 @@ class Graphics:
             Green=COLORWHEEL[13]
             Blue=COLORWHEEL[14]
             Alpha=COLORWHEEL[15]
+        if Input==-2:
+            Red=COLORWHEEL[16]
+            Green=COLORWHEEL[17]
+            Blue=COLORWHEEL[18]
+            Alpha=COLORWHEEL[19]
 
         return Red, Green, Blue, Alpha
 
     @staticmethod
-    def image(CONVERT_METHOD, COLORWHEEL, frame, N_HUMANS, infection):
-        resultInfections=SpreadVirus.calculate(infection, direction, MOVESPEED, MOVEROTATION, INFECTIONDISTANCE, PERCENTOFINFECTION, N_HUMANS)
+    def image(CONVERT_METHOD, COLORWHEEL, frame, numberOfHumans, infection, IMMUNITY):
+        resultInfections, numberOfHumans=SpreadVirus.calculate(infection, direction, MOVESPEED, MOVEROTATION, INFECTIONDISTANCE, PERCENTOFINFECTION, N_HUMANS, IMMUNITY)
         pixels=np.ndarray( (WIDTH, HEIGHT, 4) )
 
         print(frame/FRAMES)
@@ -51,17 +56,23 @@ class Graphics:
         image=Image.fromarray(np.uint8(pixels)).convert('RGB')
         image.save("./data/{}.png".format(frame))
 
+        return numberOfHumans
+
 placeHolder=True
 for frame in range(0, FRAMES):
     if not placeHolder:
         break
     
-    Graphics.image(CONVERT_METHOD, COLORWHEEL, frame, N_HUMANS, infection)
-    placeHolder=False
-    for x in range(WIDTH):
-        for y in range(HEIGHT):
-            if infection[x][y]>=1:
-                placeHolder=True
+    numberOfHumans=Graphics.image(CONVERT_METHOD, COLORWHEEL, frame, numberOfHumans, infection, IMMUNITY)
+
+    if STOP_WHEN_VIRUS_GONE:
+        placeHolder=False
+        for x in range(WIDTH):
+            for y in range(HEIGHT):
+                if infection[x][y]>=1:
+                    placeHolder=True
+
+    print(numberOfHumans)
 
 
 os.system("rm ./{}.mov; ffmpeg -framerate {} -start_number 1 -i ./data/%d.png {}.mov".format(VIDEO_NAME, FPS, VIDEO_NAME))
