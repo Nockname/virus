@@ -1,5 +1,6 @@
 from random import sample, shuffle, uniform
 from math import pi
+import numpy as np
 
 PERCENTOFINFECTION=1
 PERCENTOFDEATH=5
@@ -38,7 +39,7 @@ direction=[[False for _ in range(HEIGHT)] for _ in range(WIDTH)]
 counter=0
 for pos in sample(range(WIDTH*HEIGHT), N_HUMANS):
     infection[pos%WIDTH][pos//WIDTH] = startingInfectedList[counter]
-    direction[pos%WIDTH][pos//WIDTH] = uniform(0, 2*pi)
+    direction[pos%WIDTH][pos//WIDTH] = np.random.random()*2*pi
     counter+=1
 
 FRAMES=1000

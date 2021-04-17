@@ -78,4 +78,4 @@ class SpreadVirus:
             for yValue in range(HEIGHT):
                 infection, direction=SpreadVirus.__nextHumanPos(xValue, yValue, infection, direction, MOVESPEED, MOVEROTATION)
         
-        return infection, numberOfHumans
+        return infection, direction, numberOfHumans

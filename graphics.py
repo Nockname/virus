@@ -43,15 +43,20 @@ class Graphics:
         return Red, Green, Blue, Alpha
 
     @staticmethod
-    def image(CONVERT_METHOD, COLORWHEEL, frame, numberOfHumans, infection, IMMUNITY):
-        resultInfections, numberOfHumans=SpreadVirus.calculate(infection, direction, MOVESPEED, MOVEROTATION, INFECTIONDISTANCE, PERCENTOFINFECTION, N_HUMANS, IMMUNITY)
+    def image(CONVERT_METHOD, COLORWHEEL, frame, numberOfHumans, infection, direction, IMMUNITY):
+        infection, direction, numberOfHumans=SpreadVirus.calculate(infection.copy(), direction.copy(), 
+        MOVESPEED, MOVEROTATION, INFECTIONDISTANCE, PERCENTOFINFECTION, numberOfHumans, IMMUNITY)
+
+        resultInfections=infection
+
         pixels=np.ndarray( (WIDTH, HEIGHT, 4) )
 
         print(frame/FRAMES)
 
         for x in range(WIDTH):
             for y in range(HEIGHT):
-                pixels[x][y]=Graphics.__convert(resultInfections[x][y], INFECTIONTIME, CONVERT_METHOD, COLORWHEEL)
+                pixels[x][y]=Graphics.__convert(resultInfections[x][y], 
+                INFECTIONTIME, CONVERT_METHOD, COLORWHEEL)
 
         image=Image.fromarray(np.uint8(pixels)).convert('RGB')
         image.save("./data/{}.png".format(frame))
@@ -63,7 +68,8 @@ for frame in range(0, FRAMES):
     if not placeHolder:
         break
     
-    numberOfHumans=Graphics.image(CONVERT_METHOD, COLORWHEEL, frame, numberOfHumans, infection, IMMUNITY)
+    numberOfHumans=Graphics.image(CONVERT_METHOD, COLORWHEEL, 
+    frame, numberOfHumans, infection, direction, IMMUNITY)
 
     if STOP_WHEN_VIRUS_GONE:
         placeHolder=False
@@ -75,4 +81,5 @@ for frame in range(0, FRAMES):
     print(numberOfHumans)
 
 
-os.system("rm ./{}.mov; ffmpeg -framerate {} -start_number 1 -i ./data/%d.png {}.mov".format(VIDEO_NAME, FPS, VIDEO_NAME))
+os.system("rm ./{}.mov; ffmpeg -framerate {} -start_number 1 -i ./data/%d.png {}.mov".format(
+    VIDEO_NAME, FPS, VIDEO_NAME))
